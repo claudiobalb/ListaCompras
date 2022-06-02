@@ -1,5 +1,9 @@
+//variables
+let contador = 0;
+let costoTotal= 0;
 
-let element = document.getElementById("totalPrecio");
+
+let element = document.getElementById("totalPrecio"); //totalPrrecio Index.com linea 58
 element.innerHTML="Total en precio"; 
 
 //id="Name"  index linea 73
@@ -7,6 +11,9 @@ let txtNombre = document.getElementById("Name");
 //txtNombre.value="Leche Semidescremada";
 //console.log(txtNombre.value);
 let txtNumber = document.getElementById("Number");
+
+//let precioTotal = document.getElementById("Number") //traer la etiqueta "precioTotal"
+let total = document.getElementById("precioTotal"); 
 
 
 
@@ -41,6 +48,26 @@ let cuerpoTabla = tabla.getElementsByTagName("tbody");
 //</tr>
 //`;
 
+function validarNombre(){
+     if (txtNombre.value.length <3){
+         return false;
+     }//if
+     return true;
+} //validarNombre
+
+function validarCantidad(){
+  if(txtNumber.value.length==0){
+    return false;
+  }//if
+  if (isNaN(txtNumber.value)){
+    return false;
+  }//if
+  if (parseFloat(txtNumber.value)<=0){
+    return false;
+  }//if
+  return true; 
+}//validarCantidad
+
 //boton Index.html linea agregar  
 let agregar = document.getElementById("btnAgregar");
 
@@ -49,20 +76,69 @@ let agregar = document.getElementById("btnAgregar");
 // event parametro  event=variable
 // console.log(txtNombre.value, txtNumber.value) PARA QUE AGRAGE la caantidad de productos 
 agregar.addEventListener("click", (event) => {
-    let precio = Math.random() * 50;
+    event.preventDefault(); 
+if((! validarNombre()) || (! validarCantidad())){
+  let lista="";
+   
+  if(!validarNombre()){
+   txtNombre.style.border="red thin solid";
+   lista+="<li>Se debe escibir un nombre valido</li>";
+ }//if
+    if(!validarCantidad()){
+      txtNumber.style.border="red thin solid";
+      lista+="<li>Se debe escibir una cantidad valida</li>";
+    }//if
+    document.getElementById("alertValidacionesTexto").innerHTML=`Los campos deben ser llenados correctamente
+    <ul>${lista}</ul>
+    `;
+     document.getElementById("alertValidaciones").style.display="block";
+     setTimeout (function(){
+      document.getElementById("alertValidaciones").style.display="none";
+    },
+      5000
+);
+return false;
+}//if
+txtNumber.style.border="";
+txtNombre.style.border="";
+document.getElementById("alertValidaciones").style.display="none";
+
+
+    contador++;
+    document.getElementById("contadorProductos").innerHTML = contador;
+    //el precio lo redondea con dos digitos 0.00
+    let precio = (Math.floor((Math.random() * 50)*100))/100;
+    //costo total suma cada vez que agrego una cantidad y va sumando  precio por cantidad  precio * cantidad
+    let cantidad = parseFloat(txtNumber.value);
+    costoTotal += (precio * cantidad);  
+    //uno es la variable $ y el $ otro costotal 
+    total.innerHTML = `$ ${costoTotal.toFixed(2)}`;
+
+
     let tmp = 
     
     `<tr>
-    <th scope="row">1</th>
+    <th scope="row">${contador}</th>
     <td>${txtNombre.value}</td>
-    <td>${txtNumber.value}</td>
+    <td>${txtNumber.value}</td> 
     <td>$ ${precio}</td> 
-    </tr>`
+    </tr>`;
 
-      console.log(tmp);
+    console.log(tmp);
      cuerpoTabla[0].innerHTML += tmp;
      txtNumber.value="";
      txtNombre.value="";
      txtNombre.focus();
  }
 );
+
+//elemento blur: recorre el texto con los espacios
+txtNombre.addEventListener("blur", (event)=> {
+   event.target.value = event.target.value.trim();
+}
+);
+
+txtNumber.addEventListener("blur", (event)=> {
+  event.target.value = event.target.value.trim();
+}
+); 
