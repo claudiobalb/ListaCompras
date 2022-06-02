@@ -1,6 +1,7 @@
 //variables
 let contador = 0;
 let costoTotal= 0;
+let totalEnProductos=0;
 
 
 let element = document.getElementById("totalPrecio"); //totalPrrecio Index.com linea 58
@@ -110,6 +111,14 @@ document.getElementById("alertValidaciones").style.display="none";
     let precio = (Math.floor((Math.random() * 50)*100))/100;
     //costo total suma cada vez que agrego una cantidad y va sumando  precio por cantidad  precio * cantidad
     let cantidad = parseFloat(txtNumber.value);
+
+    //totalEnProductos += Math.ceil(cantidad); cantidad exacta
+    //cuando las cantidad sonn 1.5 o 0.250
+
+    totalEnProductos += (cantidad<1)?Math.ceil(cantidad):parseInt(cantidad);
+    document.getElementById("productosTotal").innerHTML = totalEnProductos;
+
+
     costoTotal += (precio * cantidad);  
     //uno es la variable $ y el $ otro costotal 
     total.innerHTML = `$ ${costoTotal.toFixed(2)}`;
