@@ -3,6 +3,8 @@ let contador = 0;
 let costoTotal= 0;
 let totalEnProductos=0;
 
+//[]ARREGLO PARA ALMACENAR LA LISTA DE COMPRAS
+let datos=[]; 
 
 let element = document.getElementById("totalPrecio"); //totalPrrecio Index.com linea 58
 element.innerHTML="Total en precio"; 
@@ -103,10 +105,11 @@ return false;
 txtNumber.style.border="";
 txtNombre.style.border="";
 document.getElementById("alertValidaciones").style.display="none";
-
-
-    contador++;
+contador++;
+  
     document.getElementById("contadorProductos").innerHTML = contador;
+    localStorage.setItem("contadorProductos", contador);
+
     //el precio lo redondea con dos digitos 0.00
     let precio = (Math.floor((Math.random() * 50)*100))/100;
     //costo total suma cada vez que agrego una cantidad y va sumando  precio por cantidad  precio * cantidad
@@ -117,15 +120,31 @@ document.getElementById("alertValidaciones").style.display="none";
 
     totalEnProductos += (cantidad<1)?Math.ceil(cantidad):parseInt(cantidad);
     document.getElementById("productosTotal").innerHTML = totalEnProductos;
+    localStorage.setItem("productosTotal", totalEnProductos);
 
 
     costoTotal += (precio * cantidad);  
     //uno es la variable $ y el $ otro costotal 
     total.innerHTML = `$ ${costoTotal.toFixed(2)}`;
+    localStorage.setItem("precioTotal", costoTotal.toFixed(2));
+
+    //Definicion de un objeto JSON 
+    //variable  let elemento
+     let elemento=`{ "id":${contador}, 
+         "nombre": "${txtNombre.value}", 
+        "cantidad": ${txtNumber.value}, 
+        "precio":${precio} 
+}`;
+
+//PARSE JSON- lo agrega en datos // parse toma una cadanea y lo pasa objeto 
+datos.push(JSON.parse(elemento))
+
+//Establece un valor de una cadena en el localStorage
+localStorage.setItem("elementosTabla", JSON.stringify(datos) );
+console.log(datos);
 
 
     let tmp = 
-    
     `<tr>
     <th scope="row">${contador}</th>
     <td>${txtNombre.value}</td>
@@ -133,7 +152,7 @@ document.getElementById("alertValidaciones").style.display="none";
     <td>$ ${precio}</td> 
     </tr>`;
 
-    console.log(tmp);
+    console.log(tmp);   
      cuerpoTabla[0].innerHTML += tmp;
      txtNumber.value="";
      txtNombre.value="";
@@ -150,4 +169,35 @@ txtNombre.addEventListener("blur", (event)=> {
 txtNumber.addEventListener("blur", (event)=> {
   event.target.value = event.target.value.trim();
 }
+); 
+
+window.addEventListener("load", function(){
+
+  if(localStorage.getItem("contadorProductos")!=null){
+    contador = parseInt(localStorage.getItem("contadorProductos"));
+    document.getElementById("contadorProductos").innerHTML=contador;
+  }//if contadorProductos
+  if(localStorage.getItem("productosTotal")!=null){
+    totalEnProductos = parseInt(localStorage.getItem("productosTotal"));
+    document.getElementById("productosTotal").innerHTML= contador;
+  }// if productoTotal
+  if (localStorage.getItem("precioTotal")!=null){
+    costoTotal = parseFloat(this.localStorage.getItem("precioTotal"));
+    total.innerHTML = costoTotal;
+  }// if precioTotal 
+  
+  //si hay elementos de la tabla elementosTabla  JSON.Parse = ARREGLO DE OBJETOS 
+  if(localStorage.getItem("elementosTabla")!=null){
+     datos = JSON.parse(localStorage.getItem("elementosTabla"));
+     datos.forEach(element => {
+      cuerpoTabla[0].innerHTML +=  `<tr> 
+      <th scope="row">${element.id}</th>
+      <td>${element.nombre}</td>  
+      <td>${element.cantidad}</td> 
+      <td>$ ${element.precio}</td> 
+      </tr>`;
+     
+    });
+  }// if elementosTabla
+  } 
 ); 
